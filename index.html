@@ -1,1 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Be My Valentine 💖</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(120deg, #ff9a9e, #fad0c4);
+}
+
+/* HEART BACKGROUND */
+.hearts {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.heart {
+  position: absolute;
+  bottom: -20px;
+  font-size: 24px;
+  animation: float 8s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-110vh) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* CONTENT */
+.container {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+h1 {
+  font-size: 3rem;
+  color: #b30059;
+  margin-bottom: 40px;
+}
+
+/* BUTTONS */
+.buttons {
+  display: flex;
+  gap: 40px;
+  position: relative;
+}
+
+button {
+  padding: 20px 50px;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#yesBtn {
+  background: #ff4081;
+  color: white;
+}
+
+#noBtn {
+  background: #555;
+  color: white;
+  position: relative;
+}
+
+/* QUOTES */
+#quote {
+  margin-top: 30px;
+  font-size: 1.3rem;
+  color: #4d004d;
+}
+
+/* FIREWORKS */
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* YES SCREEN */
+#yesScreen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 4;
+  color: white;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#yesScreen h2 {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+#yesScreen img {
+  width: 250px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hearts"></div>
+
+<div class="container">
+  <h1>Will you be my Valentine? 💘</h1>
+
+  <div class="buttons">
+    <button id="yesBtn">YES 💖</button>
+    <button id="noBtn">NO 💔</button>
+  </div>
+
+  <div id="quote"></div>
+</div>
+
+<canvas id="fireworks"></canvas>
+
+<div id="yesScreen">
+  <h2>YAY!!!!!!!! 🎉💖</h2>
+  <img src="dance.gif" alt="Dancing">
+</div>
+
+<script>
+/* HEARTS */
+const heartsContainer = document.querySelector('.hearts');
+for (let i = 0; i < 30; i++) {
+  const heart = document.createElement('div');
+  heart.className = 'heart';
+  heart.textContent = '💖';
+  heart.style.left = Math.random() * 100 + '%';
+  heart.style.animationDuration = 5 + Math.random() * 5 + 's';
+  heart.style.fontSize = 16 + Math.random() * 30 + 'px';
+  heartsContainer.appendChild(heart);
+}
+
+/* NO BUTTON LOGIC */
+const noBtn = document.getElementById('noBtn');
+const quotes = [
+  "Nice try 😏",
+  "You really thought that would work?",
+  "Wrong choice 😂",
+  "Come on… press YES 💕",
+  "Stop running 🤣"
+];
+
+noBtn.addEventListener('click', () => {
+  const x = Math.random() * 200 - 100;
+  const y = Math.random() * 200 - 100;
+  noBtn.style.transform = `translate(${x}px, ${y}px)`;
+
+  document.getElementById('quote').textContent =
+    quotes[Math.floor(Math.random() * quotes.length)];
+});
+
+/* YES BUTTON */
+document.getElementById('yesBtn').addEventListener('click', () => {
+  document.getElementById('yesScreen').style.display = 'flex';
+  startFireworks();
+});
+
+/* FIREWORKS (LIGHTWEIGHT & SMOOTH) */
+const canvas = document.getElementById('fireworks');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function random(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function startFireworks() {
+  const particles = [];
+
+  function createFirework() {
+    const x = random(0, canvas.width);
+    const y = random(0, canvas.height / 2);
+    for (let i = 0; i < 50; i++) {
+      particles.push({
+        x, y,
+        vx: random(-4, 4),
+        vy: random(-4, 4),
+        life: 60
+      });
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, i) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life--;
+      ctx.fillStyle = 'hsl(' + Math.random()*360 + ',100%,60%)';
+      ctx.fillRect(p.x, p.y, 3, 3);
+      if (p.life <= 0) particles.splice(i, 1);
+    });
+
+    if (Math.random() < 0.05) createFirework();
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+}
+</script>
+
+</body>
+</html>
 
